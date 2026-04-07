@@ -14,8 +14,8 @@ export default function ProjectList() {
   if (error) {
     return (
       <p>
-        Sorry we couldn't retrieve the latest projects at the moment. Please try
-        again later.
+        Sorry we could not retrieve the latest projects at the moment. Please
+        try again later.
       </p>
     );
   }
