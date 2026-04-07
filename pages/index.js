@@ -1,3 +1,4 @@
+import ProjectList from "@/components/ProjectList/ProjectList";
 import useSWR from "swr";
 
 export default function HomePage() {
@@ -16,13 +17,14 @@ export default function HomePage() {
   }
 
   return (
-    <div>
-      <h1>DIY HUB</h1>
-      <ul>
-        {data.map((project) => (
-          <li key={project._id}>{project.title}</li>
-        ))}
-      </ul>
-    </div>
+    <main>
+      <header>
+        <h1>DIY HUB</h1>
+      </header>
+
+      <section>
+        <ProjectList />
+      </section>
+    </main>
   );
 }
