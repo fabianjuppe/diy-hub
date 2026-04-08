@@ -28,9 +28,12 @@ const projectSchema = new Schema({
   materials: {
     type: [String],
   },
-  steps: {
-    type: [String],
-  },
+  steps: [
+    {
+      id: String,
+      description: String,
+    },
+  ],
 });
 
 const Project =

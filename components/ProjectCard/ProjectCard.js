@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ProjectCard({ project }) {
   return (
@@ -10,7 +11,9 @@ export default function ProjectCard({ project }) {
         height={200}
       />
 
-      <h2>{project.title}</h2>
+      <Link href={`/projects/${project.id}`}>
+        <h2>{project.title}</h2>
+      </Link>
 
       <p>
         <strong>Complexity:</strong> {project.complexity}
