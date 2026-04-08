@@ -15,7 +15,7 @@ export default function ProjectDetails({ project }) {
       />
       <MaterialsList materials={project.materials} />
       <StepsList steps={project.steps} />
-      <BackButton></BackButton>
+      <BackButton />
     </>
   );
 }

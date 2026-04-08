@@ -11,7 +11,9 @@ export default function ProjectCard({ project }) {
         height={200}
       />
 
-      <Link href={`/projects/${project.id}`}>{project.title}</Link>
+      <Link href={`/projects/${project.id}`}>
+        <h2>{project.title}</h2>
+      </Link>
 
       <p>
         <strong>Complexity:</strong> {project.complexity}
