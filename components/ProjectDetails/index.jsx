@@ -12,11 +12,10 @@ export default function ProjectDetails({ project }) {
         duration={project.duration}
         complexity={project.complexity}
         description={project.description}
-      ></ProjectInfo>
-      <MaterialsList materials={project.materials}></MaterialsList>
-      <StepsList steps={project.steps}></StepsList>
+      />
+      <MaterialsList materials={project.materials} />
+      <StepsList steps={project.steps} />
       <BackButton></BackButton>
     </>
   );
- 
 }

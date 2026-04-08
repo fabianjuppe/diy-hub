@@ -1,15 +1,9 @@
-import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function BackButton() {
-  const router = useRouter();
-
-  const goBack = () => {
-    router.push("/");
-  };
   return (
-    <button onClick={goBack} className="backButton">
-      Back
-    </button>
+    <Link href="/">
+      <button>back</button>
+    </Link>
   );
-
 }
