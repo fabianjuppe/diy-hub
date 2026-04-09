@@ -9,7 +9,8 @@ export default async function handler(request, response) {
     const project = await Project.findById(id);
 
     if (!project) {
-      return response.status(404).json({ status: "Not Found" });
+      response.status(404).json({ status: "Not Found" });
+      return;
     }
 
     response.status(200).json(project);

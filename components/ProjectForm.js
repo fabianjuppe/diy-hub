@@ -18,11 +18,33 @@ const categoryOptions = [
 const complexityOptions = ["Beginner", "Intermediate", "Advanced"];
 
 export default function ProjectForm({ onSubmit }) {
-  const [category, setCategory] = useState("");
-  const [complexity, setComplexity] = useState("");
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const projectData = Object.fromEntries(formData);
+
+    projectData.materials = projectData.materials
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    projectData.steps = projectData.steps
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .map((desc) => ({
+        id: crypto.randomUUID(),
+        description: desc,
+      }));
+
+    onSubmit(projectData);
+    event.target.reset();
+    event.target.elements.title.focus();
+  }
 
   return (
-    <StyledForm onSubmit={onSubmit} aria-labelledby="form-heading">
+    <StyledForm onSubmit={handleSubmit} aria-labelledby="form-heading">
       <h2 id="form-heading">Add a new project</h2>
 
       <label htmlFor="title">Title: </label>
@@ -32,14 +54,8 @@ export default function ProjectForm({ onSubmit }) {
       <input type="text" id="description" name="description" />
 
       <label htmlFor="categories">Category:</label>
-      <select
-        id="category"
-        name="category"
-        onChange={(e) => setCategory(e.target.value)}
-        value={category}
-        required
-      >
-        <option value="" disabled>
+      <select id="category" name="category" required>
+        <option value="" selected>
           Please select a category
         </option>
         {categoryOptions.map((option) => (
@@ -50,14 +66,8 @@ export default function ProjectForm({ onSubmit }) {
       </select>
 
       <label htmlFor="complexity">Complexity:</label>
-      <select
-        id="complexity"
-        name="complexity"
-        onChange={(e) => setComplexity(e.target.value)}
-        value={complexity}
-        required
-      >
-        <option value="" disabled>
+      <select id="complexity" name="complexity" required>
+        <option value="" selected>
           Please select a complexity
         </option>
         {complexityOptions.map((option) => (
