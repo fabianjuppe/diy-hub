@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import ProjectCard from "../ProjectCard/ProjectCard";
+import ProjectCard from "./ProjectCard";
 
 export default function ProjectList() {
   const { data, isLoading, error } = useSWR("/api/projects");

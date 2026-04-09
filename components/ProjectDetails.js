@@ -1,7 +1,7 @@
-import BackButton from "../BackButton";
-import MaterialsList from "../MaterialsList";
-import ProjectInfo from "../ProjectInfo";
-import StepsList from "../StepsList";
+import BackButton from "./BackButton";
+import MaterialsList from "./MaterialsList";
+import ProjectInfo from "./ProjectInfo";
+import StepsList from "./StepsList";
 
 export default function ProjectDetails({ project }) {
   return (
