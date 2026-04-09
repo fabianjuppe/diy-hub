@@ -5,8 +5,16 @@ export default async function handler(request, response) {
   await dbConnect();
 
   if (request.method === "GET") {
-    const projects = await Project.find();
+    const projects = await Project.find().sort({ createdAt: -1 });
     response.status(200).json(projects);
+    return;
+  }
+
+  if (request.method === "POST") {
+    const projectData = request.body;
+    await Project.create(projectData);
+
+    response.status(201).json({ status: "Project successfully created." });
     return;
   }
 

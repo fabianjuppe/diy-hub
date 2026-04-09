@@ -11,7 +11,7 @@ export default function ProjectCard({ project }) {
         height={200}
       />
 
-      <Link href={`/projects/${project.id}`}>
+      <Link href={`/${project._id}`}>
         <h2>{project.title}</h2>
       </Link>
 
