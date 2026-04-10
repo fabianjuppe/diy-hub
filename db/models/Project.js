@@ -13,6 +13,11 @@ const projectSchema = new Schema({
     required: true,
     default: "/placeholder.jpg",
   },
+
+  category: {
+    type: String,
+    required: true,
+  },
   complexity: {
     type: String,
     required: true,
