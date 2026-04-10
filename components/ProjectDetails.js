@@ -11,6 +11,7 @@ export default function ProjectDetails({ project }) {
   const [error, setError] = useState(null);
 
   async function handleDelete() {
+    setError(null);
     try {
       const response = await fetch(`/api/projects/${project._id}`, {
         method: "DELETE",
