@@ -17,7 +17,7 @@ const categoryOptions = [
 
 const complexityOptions = ["Beginner", "Intermediate", "Advanced"];
 
-export default function ProjectForm({ onSubmit }) {
+export default function ProjectForm({ onSubmit, defaultData }) {
   function handleSubmit(event) {
     event.preventDefault();
 
@@ -45,16 +45,35 @@ export default function ProjectForm({ onSubmit }) {
 
   return (
     <StyledForm onSubmit={handleSubmit} aria-labelledby="form-heading">
-      <h2 id="form-heading">Add a new project</h2>
+      <h2 id="form-heading">
+        {defaultData ? "Edit Project" : "Add a new project"}
+      </h2>
 
       <label htmlFor="title">Title: </label>
-      <input type="text" id="title" name="title" required minLength={3} />
+      <input
+        type="text"
+        id="title"
+        name="title"
+        required
+        minLength={3}
+        defaultValue={defaultData?.title}
+      />
 
       <label htmlFor="description">Description: </label>
-      <input type="text" id="description" name="description" />
+      <input
+        type="text"
+        id="description"
+        name="description"
+        defaultValue={defaultData?.description}
+      />
 
-      <label htmlFor="categories">Category:</label>
-      <select id="category" name="category" required>
+      <label htmlFor="category">Category:</label>
+      <select
+        id="category"
+        name="category"
+        defaultValue={defaultData?.category}
+        required
+      >
         <option value="" selected>
           Please select a category
         </option>
@@ -66,7 +85,12 @@ export default function ProjectForm({ onSubmit }) {
       </select>
 
       <label htmlFor="complexity">Complexity:</label>
-      <select id="complexity" name="complexity" required>
+      <select
+        id="complexity"
+        name="complexity"
+        defaultValue={defaultData?.complexity}
+        required
+      >
         <option value="" selected>
           Please select a complexity
         </option>
@@ -78,13 +102,31 @@ export default function ProjectForm({ onSubmit }) {
       </select>
 
       <label htmlFor="duration">Duration: </label>
-      <input type="text" id="duration" name="duration" required />
+      <input
+        type="text"
+        id="duration"
+        name="duration"
+        defaultValue={defaultData?.duration}
+        required
+      />
 
       <label htmlFor="materials">Materials: </label>
-      <input type="text" id="materials" name="materials" />
+      <input
+        type="text"
+        id="materials"
+        name="materials"
+        defaultValue={defaultData?.materials}
+      />
 
       <label htmlFor="steps">Steps: </label>
-      <input type="text" id="steps" name="steps" />
+      <input
+        type="text"
+        id="steps"
+        name="steps"
+        defaultValue={defaultData?.steps
+          ?.map((step) => step.description)
+          .join(", ")}
+      />
 
       <button type="submit">Submit</button>
     </StyledForm>

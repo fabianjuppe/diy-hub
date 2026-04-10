@@ -9,6 +9,7 @@ export default function ProjectDetails({ project }) {
       <ProjectInfo
         title={project.title}
         imageURL={project.imageURL}
+        category={project.category}
         duration={project.duration}
         complexity={project.complexity}
         description={project.description}
