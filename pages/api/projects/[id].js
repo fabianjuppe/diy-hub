@@ -25,6 +25,17 @@ export default async function handler(request, response) {
     response.status(200).json({ status: "Project successfully updated." });
     return;
   }
+  if (request.method === "DELETE") {
+    try {
+      await Project.findByIdAndDelete(id);
+
+      return response
+        .status(200)
+        .json({ status: "Project successfully deleted." });
+    } catch (error) {
+      return response.status(500).json({ status: "Error deleting project." });
+    }
+  }
 
   response.status(405).json({ status: "Method not allowed." });
 }
