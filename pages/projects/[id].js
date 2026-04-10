@@ -2,12 +2,11 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import ProjectDetails from "@/components/ProjectDetails";
 import { useState } from "react";
-import styled from "styled-components";
 import ProjectForm from "@/components/ProjectForm";
 
 export default function ProjectsDetailsPage() {
   const [showEditForm, setShowEditForm] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [toastMessage, setToastMessage] = useState({ type: "", text: "" });
   const router = useRouter();
   const { id } = router.query;
 
@@ -15,38 +14,44 @@ export default function ProjectsDetailsPage() {
 
   //EDIT
   async function handleEditProject(projectData) {
-    const response = await fetch(`api/projects/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(projectData),
-    });
+    try {
+      const response = await fetch(`/api/projects/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(projectData),
+      });
 
-    if (!response.ok) {
-      console.error(response.status);
-      return;
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      await mutate();
+      setShowEditForm(false);
+
+      setToastMessage({
+        type: "success",
+        text: "Project updated successfully!",
+      });
+    } catch (error) {
+      console.error(error);
+
+      setToastMessage({
+        type: "error",
+        text: "Something went wrong while updating the project.",
+      });
     }
 
-    await mutate();
-    setShowEditForm(false);
-
-    setSuccessMessage("Project updated successfully!");
-
     setTimeout(() => {
-      setSuccessMessage("");
+      setToastMessage({ type: "", text: "" });
     }, 3000);
   }
-
-  if (isLoading) return <h1>Loading...</h1>;
-  if (error) return <h1>Error</h1>;
-  if (!data) return null;
-
   return (
     <>
       {!showEditForm && (
         <>
-          {successMessage && <p>{successMessage}</p>}
+          {toastMessage.text && <p>{toastMessage.text}</p>}
           <ProjectDetails project={data} />
           <button onClick={() => setShowEditForm(true)}>Edit</button>
         </>
