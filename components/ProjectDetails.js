@@ -8,16 +8,22 @@ import { useRouter } from "next/router";
 export default function ProjectDetails({ project }) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [error, setError] = useState(null);
+
   async function handleDelete() {
-    const response = await fetch(`/api/projects/${project._id}`, {
-      method: "DELETE",
-    });
-    if (response.ok) {
+    try {
+      const response = await fetch(`/api/projects/${project._id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Delete failed");
+      }
       router.push("/");
-    } else {
-      console.error("Delete failed:", response.status);
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
     }
   }
+
   return (
     <>
       <ProjectInfo
@@ -31,7 +37,11 @@ export default function ProjectDetails({ project }) {
       <StepsList steps={project.steps} />
       <BackButton />
 
-      <button onClick={() => setShowConfirm(true)}>Delete Project</button>
+      <button onClick={() => setShowConfirm(true)} disabled={showConfirm}>
+        Delete Project
+      </button>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {showConfirm && (
         <div>
