@@ -8,12 +8,10 @@ import styled from "styled-components";
 import NotesSection from "./NotesSection";
 import useSWR from "swr";
 
-export default function ProjectDetails({ project, onEdit }) {
+export default function ProjectDetails({ project, onEdit, mutate }) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState(null);
-
-  const { mutate } = useSWR(`/api/projects/${project._id}`);
 
   async function handleDelete() {
     setError(null);
