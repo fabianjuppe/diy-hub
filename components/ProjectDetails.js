@@ -5,11 +5,15 @@ import ProjectInfo from "./ProjectInfo";
 import StepsList from "./StepsList";
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import NotesSection from "./NotesSection";
+import useSWR from "swr";
 
 export default function ProjectDetails({ project, onEdit }) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState(null);
+
+  const { mutate } = useSWR(`/api/projects/${project._id}`);
 
   async function handleDelete() {
     setError(null);
@@ -23,6 +27,73 @@ export default function ProjectDetails({ project, onEdit }) {
       router.push("/");
     } catch (error) {
       setError("Something went wrong. Please try again.");
+    }
+  }
+
+  async function handleAddNote(note) {
+    try {
+      const response = await fetch(`/api/projects/${project._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action: "addNote", note }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      await mutate();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function handleEditNote(noteId, content) {
+    try {
+      const response = await fetch(`/api/projects/${project._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "editNote",
+          noteId,
+          content,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      await mutate();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function handleDeleteNote(noteId) {
+    try {
+      const response = await fetch(`/api/projects/${project._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "deleteNote",
+          noteId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      await mutate();
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -44,14 +115,23 @@ export default function ProjectDetails({ project, onEdit }) {
         <h3>Steps</h3>
         <StepsList steps={project?.steps} />
       </Section>
+      <NotesSection
+        notes={project?.notes}
+        onAdd={handleAddNote}
+        onEdit={handleEditNote}
+        onDelete={handleDeleteNote}
+      />
       <BackWrapper>
         <BackButton />
       </BackWrapper>
       <ActionGroup>
         <EditButton onClick={onEdit}>Edit</EditButton>
-      <DeleteButton onClick={() => setShowConfirm(true)} disabled={showConfirm}>
-        Delete Project
-      </DeleteButton>
+        <DeleteButton
+          onClick={() => setShowConfirm(true)}
+          disabled={showConfirm}
+        >
+          Delete Project
+        </DeleteButton>
       </ActionGroup>
 
       {error && <p style={{ color: "red" }}>{error}</p>}

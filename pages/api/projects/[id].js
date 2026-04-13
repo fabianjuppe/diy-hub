@@ -25,6 +25,53 @@ export default async function handler(request, response) {
     response.status(200).json({ status: "Project successfully updated." });
     return;
   }
+
+  if (request.method === "PATCH") {
+    try {
+      const { action, note, noteId, content } = request.body;
+
+      if (action === "addNote") {
+        await Project.findByIdAndUpdate(
+          id,
+          {
+            $push: {
+              notes: {
+                $each: [note],
+                $position: 0,
+              },
+            },
+          },
+          { new: true }
+        );
+      }
+
+      if (action === "editNote") {
+        await Project.findOneAndUpdate(
+          { _id: id, "notes.id": noteId },
+          {
+            $set: {
+              "notes.$.content": content,
+            },
+          }
+        );
+      }
+
+      console.log("noteId:", noteId);
+
+      if (action === "deleteNote") {
+        await Project.findByIdAndUpdate(id, {
+          $pull: { notes: { id: noteId } },
+        });
+      }
+
+      response.status(200).json({ status: "Note successfully added." });
+      return;
+    } catch (error) {
+      response.status(500).json({ status: "Error adding note." });
+      return;
+    }
+  }
+
   if (request.method === "DELETE") {
     try {
       await Project.findByIdAndDelete(id);
