@@ -1,6 +1,7 @@
 import ProjectForm from "@/components/ProjectForm";
 import ProjectList from "@/components/ProjectList";
 import useSWR from "swr";
+import styled from "styled-components";
 
 export default function HomePage() {
   const { data, isLoading, error, mutate } = useSWR("/api/projects");
@@ -37,15 +38,31 @@ export default function HomePage() {
   }
 
   return (
-    <main>
-      <header>
-        <h1>DIY HUB</h1>
-      </header>
+    <Main>
+      <Header>
+        <Heading>DIY HUB</Heading>
+      </Header>
 
       <section>
         <ProjectForm onSubmit={handleAddProject} />
         <ProjectList />
       </section>
-    </main>
+    </Main>
   );
 }
+const Main = styled.main`
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+`;
+
+const Header = styled.header`
+  text-align: center;
+  margin-bottom: 30px;
+`;
+
+const Heading = styled.h1`
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+`;
