@@ -2,9 +2,36 @@ import ProjectForm from "@/components/ProjectForm";
 import ProjectList from "@/components/ProjectList";
 import useSWR from "swr";
 import styled from "styled-components";
+import { useState, useEffect } from "react";
+import Filter from "@/components/Filter";
 
 export default function HomePage() {
+  const [filters, setFilters] = useState(() => {
+    if (typeof window === "undefined") {
+      return {
+        category: "",
+        complexity: "",
+        duration: "",
+        search: "",
+      };
+    }
+
+    const saved = localStorage.getItem("filters");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          category: "",
+          complexity: "",
+          duration: "",
+          search: "",
+        };
+  });
+
   const { data, isLoading, error, mutate } = useSWR("/api/projects");
+
+  useEffect(() => {
+    localStorage.setItem("filters", JSON.stringify(filters));
+  }, [filters]);
 
   if (error) {
     return <h1>ERROR</h1>;
@@ -17,6 +44,25 @@ export default function HomePage() {
   if (!data) {
     return;
   }
+
+  const filteredProjects = data.filter((project) => {
+    const matchesSearch =
+      !filters.search ||
+      project.title.toLowerCase().includes(filters.search.toLowerCase());
+
+    const matchesCategory =
+      !filters.category || project.category === filters.category;
+
+    const matchesComplexity =
+      !filters.complexity || project.complexity === filters.complexity;
+
+    const matchesDuration =
+      !filters.duration || project.duration === filters.duration;
+
+    return (
+      matchesSearch && matchesCategory && matchesComplexity && matchesDuration
+    );
+  });
 
   async function handleAddProject(projectData) {
     const response = await fetch("/api/projects", {
@@ -45,7 +91,8 @@ export default function HomePage() {
 
       <section>
         <ProjectForm onSubmit={handleAddProject} />
-        <ProjectList />
+        <Filter filters={filters} setFilters={setFilters} />
+        <ProjectList projects={filteredProjects} />
       </section>
     </Main>
   );
