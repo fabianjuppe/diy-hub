@@ -2,44 +2,57 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
-const projectSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
-    minlength: 3,
-  },
-  imageUrl: {
-    type: String,
-    required: true,
-    default: "/placeholder.jpg",
-  },
-
-  category: {
-    type: String,
-    required: true,
-  },
-  complexity: {
-    type: String,
-    required: true,
-    enum: ["Beginner", "Intermediate", "Advanced"],
-  },
-  duration: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-  },
-  materials: {
-    type: [String],
-  },
-  steps: [
-    {
-      id: String,
-      description: String,
+const projectSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      minlength: 3,
     },
-  ],
-});
+    imageUrl: {
+      type: String,
+      required: true,
+      default: "/placeholder.jpg",
+    },
+
+    category: {
+      type: String,
+      required: true,
+    },
+    complexity: {
+      type: String,
+      required: true,
+      enum: ["Beginner", "Intermediate", "Advanced"],
+    },
+    duration: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    materials: {
+      type: [String],
+    },
+    steps: [
+      {
+        id: String,
+        description: String,
+      },
+    ],
+    notes: [
+      {
+        id: String,
+        content: String,
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
 const Project =
   mongoose.models.Project || mongoose.model("Project", projectSchema);

@@ -25,6 +25,7 @@ export default async function handler(request, response) {
     response.status(200).json({ status: "Project successfully updated." });
     return;
   }
+
   if (request.method === "DELETE") {
     try {
       await Project.findByIdAndDelete(id);

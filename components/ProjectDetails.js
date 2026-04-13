@@ -5,8 +5,9 @@ import ProjectInfo from "./ProjectInfo";
 import StepsList from "./StepsList";
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import NotesSection from "./NotesSection";
 
-export default function ProjectDetails({ project, onEdit }) {
+export default function ProjectDetails({ project, onEdit, mutate }) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState(null);
@@ -21,6 +22,72 @@ export default function ProjectDetails({ project, onEdit }) {
         throw new Error("Delete failed");
       }
       router.push("/");
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
+    }
+  }
+
+  async function handleAddNote(note) {
+    try {
+      const response = await fetch(`/api/projects/${project._id}/notes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(note),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      await mutate();
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
+    }
+  }
+
+  async function handleEditNote(noteId, content) {
+    try {
+      const response = await fetch(
+        `/api/projects/${project._id}/notes/${noteId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      await mutate();
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
+    }
+  }
+
+  async function handleDeleteNote(noteId) {
+    try {
+      const response = await fetch(
+        `/api/projects/${project._id}/notes/${noteId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      console.log("HELLO");
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      await mutate();
     } catch (error) {
       setError("Something went wrong. Please try again.");
     }
@@ -44,14 +111,23 @@ export default function ProjectDetails({ project, onEdit }) {
         <h3>Steps</h3>
         <StepsList steps={project?.steps} />
       </Section>
+      <NotesSection
+        notes={project?.notes}
+        onAdd={handleAddNote}
+        onEdit={handleEditNote}
+        onDelete={handleDeleteNote}
+      />
       <BackWrapper>
         <BackButton />
       </BackWrapper>
       <ActionGroup>
         <EditButton onClick={onEdit}>Edit</EditButton>
-      <DeleteButton onClick={() => setShowConfirm(true)} disabled={showConfirm}>
-        Delete Project
-      </DeleteButton>
+        <DeleteButton
+          onClick={() => setShowConfirm(true)}
+          disabled={showConfirm}
+        >
+          Delete Project
+        </DeleteButton>
       </ActionGroup>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
