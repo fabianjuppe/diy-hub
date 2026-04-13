@@ -6,7 +6,6 @@ import StepsList from "./StepsList";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import NotesSection from "./NotesSection";
-import useSWR from "swr";
 
 export default function ProjectDetails({ project, onEdit, mutate }) {
   const router = useRouter();
@@ -30,12 +29,12 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
 
   async function handleAddNote(note) {
     try {
-      const response = await fetch(`/api/projects/${project._id}`, {
-        method: "PATCH",
+      const response = await fetch(`/api/projects/${project._id}/notes`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ action: "addNote", note }),
+        body: JSON.stringify(note),
       });
 
       if (!response.ok) {
@@ -44,23 +43,24 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
 
       await mutate();
     } catch (error) {
-      console.error(error);
+      setError("Something went wrong. Please try again.");
     }
   }
 
   async function handleEditNote(noteId, content) {
     try {
-      const response = await fetch(`/api/projects/${project._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          action: "editNote",
-          noteId,
-          content,
-        }),
-      });
+      const response = await fetch(
+        `/api/projects/${project._id}/notes/${noteId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
@@ -68,22 +68,20 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
 
       await mutate();
     } catch (error) {
-      console.error(error);
+      setError("Something went wrong. Please try again.");
     }
   }
 
   async function handleDeleteNote(noteId) {
     try {
-      const response = await fetch(`/api/projects/${project._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          action: "deleteNote",
-          noteId,
-        }),
-      });
+      const response = await fetch(
+        `/api/projects/${project._id}/notes/${noteId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      console.log("HELLO");
 
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
@@ -91,7 +89,7 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
 
       await mutate();
     } catch (error) {
-      console.error(error);
+      setError("Something went wrong. Please try again.");
     }
   }
 
