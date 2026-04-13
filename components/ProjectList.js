@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import ProjectCard from "./ProjectCard";
+import styled from "styled-components";
 
 export default function ProjectList() {
   const { data, isLoading, error } = useSWR("/api/projects");
@@ -18,12 +19,19 @@ export default function ProjectList() {
   }
 
   return (
-    <ul>
+    <Grid>
       {data?.map((project) => (
-        <li key={project._id}>
-          <ProjectCard project={project} />
-        </li>
+        <ProjectCard key={project._id} project={project} />
       ))}
-    </ul>
+    </Grid>
   );
 }
+const Grid = styled.section`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+`;
+
+const P = styled.p`
+  text-align: center;
+`;
