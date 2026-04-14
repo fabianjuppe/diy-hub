@@ -4,15 +4,22 @@ import useSWR from "swr";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import Filter from "@/components/Filter";
+import SearchBar from "@/components/SearchBar";
 
 export default function HomePage() {
+  const [search, setSearch] = useState(() => {
+    if (typeof window === "undefined") return "";
+
+    const saved = localStorage.getItem("search");
+    return saved ? saved : "";
+  });
+
   const [filters, setFilters] = useState(() => {
     if (typeof window === "undefined") {
       return {
         category: "",
         complexity: "",
         duration: "",
-        search: "",
       };
     }
 
@@ -23,7 +30,6 @@ export default function HomePage() {
           category: "",
           complexity: "",
           duration: "",
-          search: "",
         };
   });
 
@@ -32,6 +38,10 @@ export default function HomePage() {
   useEffect(() => {
     localStorage.setItem("filters", JSON.stringify(filters));
   }, [filters]);
+
+  useEffect(() => {
+    localStorage.setItem("search", search);
+  }, [search]);
 
   if (error) {
     return <h1>ERROR</h1>;
@@ -47,8 +57,11 @@ export default function HomePage() {
 
   const filteredProjects = data.filter((project) => {
     const matchesSearch =
-      !filters.search ||
-      project.title.toLowerCase().includes(filters.search.toLowerCase());
+      !search || project.title.toLowerCase().includes(search.toLowerCase());
+    project.description?.toLowerCase().includes(search.toLowerCase());
+    project.materials?.some((material) =>
+      material.toLowerCase().includes(search.toLowerCase())
+    );
 
     const matchesCategory =
       !filters.category || project.category === filters.category;
@@ -91,7 +104,12 @@ export default function HomePage() {
 
       <section>
         <ProjectForm onSubmit={handleAddProject} />
-        <Filter filters={filters} setFilters={setFilters} />
+        <SearchBar search={search} setSearch={setSearch} />
+        <Filter
+          filters={filters}
+          setFilters={setFilters}
+          setSearch={setSearch}
+        />
         <ProjectList projects={filteredProjects} />
       </section>
     </Main>

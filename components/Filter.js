@@ -21,7 +21,7 @@ const durationOptions = [
   "2 days",
 ];
 
-export default function Filter({ filters, setFilters }) {
+export default function Filter({ filters, setFilters, setSearch }) {
   function handleChange(event) {
     const { name, value } = event.target;
 
@@ -36,22 +36,15 @@ export default function Filter({ filters, setFilters }) {
       category: "",
       complexity: "",
       duration: "",
-      search: "",
     };
+    setSearch("");
     setFilters(reset);
     localStorage.removeItem("filters");
+    localStorage.removeItem("search");
   }
 
   return (
     <Wrapper>
-      <input
-        type="text"
-        placeholder="Search..."
-        name="search"
-        value={filters.search}
-        onChange={handleChange}
-      />
-
       <StyledSelect
         name="category"
         value={filters.category}
