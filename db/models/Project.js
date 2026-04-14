@@ -50,6 +50,11 @@ const projectSchema = new Schema(
         },
       },
     ],
+    status: {
+      type: String,
+      enum: ["Planning", "In Progress", "Completed"],
+      default: "Planning",
+    },
   },
   { timestamps: true }
 );

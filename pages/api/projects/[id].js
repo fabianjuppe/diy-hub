@@ -26,6 +26,17 @@ export default async function handler(request, response) {
     return;
   }
 
+  if (request.method === "PATCH") {
+    const { status } = request.body;
+
+    if (status) {
+      await Project.findByIdAndUpdate(id, { status });
+    }
+
+    response.status(200).json({ status: "Status successfully updated." });
+    return;
+  }
+
   if (request.method === "DELETE") {
     try {
       await Project.findByIdAndDelete(id);

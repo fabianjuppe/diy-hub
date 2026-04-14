@@ -6,6 +6,7 @@ import StepsList from "./StepsList";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import NotesSection from "./NotesSection";
+import { statusColors } from "@/utils/statusColors";
 
 export default function ProjectDetails({ project, onEdit, mutate }) {
   const router = useRouter();
@@ -81,7 +82,25 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
         }
       );
 
-      console.log("HELLO");
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      await mutate();
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
+    }
+  }
+
+  async function handleStatusChange(status) {
+    try {
+      const response = await fetch(`/api/projects/${project._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
 
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
@@ -103,6 +122,14 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
         complexity={project?.complexity}
         description={project?.description}
       />
+      <StyledSelect
+        value={project?.status}
+        onChange={(e) => handleStatusChange(e.target.value)}
+      >
+        <option value="Planning">Planning</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </StyledSelect>
       <Section>
         <h3>Materials</h3>
         <MaterialsList materials={project?.materials} />
@@ -159,6 +186,14 @@ const Wrapper = styled.main`
   max-width: 800px;
   margin: 40px auto;
   padding: 20px;
+`;
+
+const StyledSelect = styled.select`
+  color: #fff;
+  padding: 6px;
+  border-radius: 8px;
+  background-color: ${({ value }) => statusColors[value] || "#fff"};
+  border: 1px solid ${({ value }) => statusColors[value] || "#fff"};
 `;
 
 const Section = styled.section`
