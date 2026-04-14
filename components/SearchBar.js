@@ -16,7 +16,7 @@ export default function SearchBar({ search, setSearch }) {
         onChange={handleChange}
       />
 
-      {search && <ClearButton onClick={handleClear}>X</ClearButton>}
+      {search && <ClearButton onClick={handleClear} aria-label="Clear search">X</ClearButton>}
     </Wrapper>
   );
 }

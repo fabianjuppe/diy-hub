@@ -57,11 +57,12 @@ export default function HomePage() {
 
   const filteredProjects = data.filter((project) => {
     const matchesSearch =
-      !search || project.title.toLowerCase().includes(search.toLowerCase());
-    project.description?.toLowerCase().includes(search.toLowerCase());
-    project.materials?.some((material) =>
-      material.toLowerCase().includes(search.toLowerCase())
-    );
+      !search ||
+      project.title.toLowerCase().includes(search.toLowerCase()) ||
+      project.description?.toLowerCase().includes(search.toLowerCase()) ||
+      project.materials?.some((material) =>
+        material.toLowerCase().includes(search.toLowerCase())
+      );
 
     const matchesCategory =
       !filters.category || project.category === filters.category;
