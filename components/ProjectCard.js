@@ -3,12 +3,30 @@ import Link from "next/link";
 import styled from "styled-components";
 
 export default function ProjectCard({ project }) {
+  // Sicherheitsabfrage, nur wen project.imageUrl gültiger String ist nutzen
+  const imageSrc = (() => {
+    // MEHRERE BILDER
+    if (Array.isArray(project?.imageUrl) && project.imageUrl.length > 0) {
+      return project.imageUrl[0];
+    }
+
+    // EINZEL BILD
+    if (
+      typeof project?.imageUrl === "string" &&
+      (project.imageUrl.startsWith("http") || project.imageUrl.startsWith("/"))
+    ) {
+      return project.imageUrl;
+    }
+
+    // DEFAULT
+    return "/placeholder.jpg";
+  })();
   return (
     <Article>
       <ImageWrapper>
         <Image
-          src={project.imageUrl || "/placeholder.jpg"}
-          alt={`Image of ${project.title}`}
+          src={imageSrc}
+          alt="project image"
           fill
           style={{ objectFit: "cover" }}
         />
@@ -49,6 +67,7 @@ const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 180px;
+  overflow: hiddden;
 `;
 
 const Content = styled.div`
@@ -93,5 +112,3 @@ const StyledLink = styled(Link)`
     width: 100%;
   }
 `;
-
-

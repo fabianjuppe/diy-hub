@@ -9,9 +9,8 @@ const projectSchema = new Schema({
     minlength: 3,
   },
   imageUrl: {
-    type: String,
-    required: true,
-    default: "/placeholder.jpg",
+    type: [String],
+    default: ["/placeholder.jpg"],
   },
 
   category: {

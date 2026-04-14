@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import ImageUpload from "./ImageUpload";
 
 const categoryOptions = [
   "Woodworking",
@@ -13,11 +14,30 @@ const categoryOptions = [
 const complexityOptions = ["Beginner", "Intermediate", "Advanced"];
 
 export default function ProjectForm({ onSubmit, defaultData }) {
-  function handleSubmit(event) {
+  const [imageURLs, setImageURLs] = useState(
+    Array.isArray(defaultData?.imageUrl)
+      ? defaultData.imageUrl
+      : defaultData?.imageUrl
+        ? [defaultData.imageUrl]
+        : []
+  );
+  const [uploadKey, setUploadKey] = useState(0);
+
+  async function handleSubmit(event) {
     event.preventDefault();
 
     const formData = new FormData(event.target);
-    const projectData = Object.fromEntries(formData);
+
+    const projectData = {
+      title: formData.get("title"),
+      description: formData.get("description"),
+      category: formData.get("category"),
+      complexity: formData.get("complexity"),
+      duration: formData.get("duration"),
+      materials: formData.get("materials"),
+      steps: formData.get("steps"),
+      imageUrl: imageURLs,
+    };
 
     projectData.materials = projectData.materials
       .split(",")
@@ -33,8 +53,12 @@ export default function ProjectForm({ onSubmit, defaultData }) {
         description: desc,
       }));
 
+    //RESET
     onSubmit(projectData);
     event.target.reset();
+    setImageURLs([]);
+    setUploadKey((prev) => prev + 1);
+
     event.target.elements.title.focus();
   }
 
@@ -54,6 +78,12 @@ export default function ProjectForm({ onSubmit, defaultData }) {
         defaultValue={defaultData?.title}
       />
 
+      <ImageUpload
+        key={uploadKey}
+        onUpload={setImageURLs}
+        existingImages={imageURLs}
+      />
+
       <StyledLabel htmlFor="description">Description: </StyledLabel>
       <StyledInput
         type="text"
@@ -69,9 +99,7 @@ export default function ProjectForm({ onSubmit, defaultData }) {
         defaultValue={defaultData?.category}
         required
       >
-        <option value="" selected>
-          Please select a category
-        </option>
+        <option value="">Please select a category</option>
         {categoryOptions.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -86,9 +114,7 @@ export default function ProjectForm({ onSubmit, defaultData }) {
         defaultValue={defaultData?.complexity}
         required
       >
-        <option value="" selected>
-          Please select a complexity
-        </option>
+        <option value="">Please select a complexity</option>
         {complexityOptions.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -137,7 +163,6 @@ const StyledForm = styled.form`
   border-radius: 12px;
   background: #ffffff;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-
 `;
 
 const Title = styled.h2`
