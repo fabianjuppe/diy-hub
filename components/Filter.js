@@ -36,6 +36,7 @@ export default function Filter({ filters, setFilters, setSearch }) {
       category: "",
       complexity: "",
       duration: "",
+      bookmarked: false,
     };
     setSearch("");
     setFilters(reset);
@@ -84,6 +85,24 @@ export default function Filter({ filters, setFilters, setSearch }) {
         ))}
       </StyledSelect>
 
+      <HeartButton
+        type="button"
+        onClick={() =>
+          setFilters((prev) => ({
+            ...prev,
+            bookmarked: !prev.bookmarked,
+          }))
+        }
+        aria-label={
+          filters.bookmarked
+            ? "Show all projects"
+            : "Show only bookmarked projects"
+        }
+        aria-pressed={filters.bookmarked}
+      >
+        {filters.bookmarked ? "❤️" : "🤍"}
+      </HeartButton>
+
       <ResetButton type="button" onClick={handleReset}>
         Reset Filters
       </ResetButton>
@@ -103,6 +122,17 @@ const StyledSelect = styled.select`
   border-radius: 8px;
   border: 1px solid #ddd;
   background: white;
+`;
+
+const HeartButton = styled.button`
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+
+  &:hover {
+    transform: scale(1.2);
+  }
 `;
 
 const ResetButton = styled.button`

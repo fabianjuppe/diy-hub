@@ -20,6 +20,7 @@ export default function HomePage() {
         category: "",
         complexity: "",
         duration: "",
+        bookmarked: false,
       };
     }
 
@@ -30,7 +31,15 @@ export default function HomePage() {
           category: "",
           complexity: "",
           duration: "",
+          bookmarked: false,
         };
+  });
+
+  const [bookmarks, setBookmarks] = useState(() => {
+    if (typeof window === "undefined") return {};
+
+    const saved = localStorage.getItem("bookmarks");
+    return saved ? JSON.parse(saved) : {};
   });
 
   const { data, isLoading, error, mutate } = useSWR("/api/projects");
@@ -42,6 +51,10 @@ export default function HomePage() {
   useEffect(() => {
     localStorage.setItem("search", search);
   }, [search]);
+
+  useEffect(() => {
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+  }, [bookmarks]);
 
   if (error) {
     return <h1>ERROR</h1>;
@@ -73,10 +86,23 @@ export default function HomePage() {
     const matchesDuration =
       !filters.duration || project.duration === filters.duration;
 
+    const matchesBookmarked = !filters.bookmarked || bookmarks[project._id];
+
     return (
-      matchesSearch && matchesCategory && matchesComplexity && matchesDuration
+      matchesSearch &&
+      matchesCategory &&
+      matchesComplexity &&
+      matchesDuration &&
+      matchesBookmarked
     );
   });
+
+  function toggleBookmark(id) {
+    setBookmarks((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  }
 
   async function handleAddProject(projectData) {
     const response = await fetch("/api/projects", {
@@ -111,7 +137,11 @@ export default function HomePage() {
           setFilters={setFilters}
           setSearch={setSearch}
         />
-        <ProjectList projects={filteredProjects} />
+        <ProjectList
+          projects={filteredProjects}
+          bookmarks={bookmarks}
+          toggleBookmark={toggleBookmark}
+        />
       </section>
     </Main>
   );

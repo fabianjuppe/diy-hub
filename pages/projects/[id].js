@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import ProjectDetails from "@/components/ProjectDetails";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProjectForm from "@/components/ProjectForm";
 import styled from "styled-components";
 
@@ -12,6 +12,24 @@ export default function ProjectsDetailsPage() {
   const { id } = router.query;
 
   const { data, isLoading, error, mutate } = useSWR(`/api/projects/${id}`);
+
+  const [bookmarks, setBookmarks] = useState(() => {
+    if (typeof window === "undefined") return {};
+
+    const saved = localStorage.getItem("bookmarks");
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  useEffect(() => {
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+  }, [bookmarks]);
+
+  function toggleBookmark(id) {
+    setBookmarks((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  }
 
   //EDIT
   async function handleEditProject(projectData) {
@@ -60,6 +78,8 @@ export default function ProjectsDetailsPage() {
             project={data}
             onEdit={() => setShowEditForm(true)}
             mutate={mutate}
+            bookmarks={bookmarks}
+            toggleBookmark={toggleBookmark}
           />
         </>
       )}

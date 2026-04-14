@@ -8,7 +8,13 @@ import styled from "styled-components";
 import NotesSection from "./NotesSection";
 import { statusColors } from "@/utils/statusColors";
 
-export default function ProjectDetails({ project, onEdit, mutate }) {
+export default function ProjectDetails({
+  project,
+  onEdit,
+  mutate,
+  bookmarks,
+  toggleBookmark,
+}) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState(null);
@@ -122,6 +128,17 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
         complexity={project?.complexity}
         description={project?.description}
       />
+
+      <HeartButton
+        onClick={() => toggleBookmark(project?._id)}
+        aria-label={
+          bookmarks[project?._id] ? "Remove from bookmarks" : "Add to bookmarks"
+        }
+        aria-pressed={bookmarks[project?._id]}
+      >
+        {bookmarks[project?._id] ? "❤️" : "🤍"}
+      </HeartButton>
+
       <StyledSelect
         value={project?.status}
         onChange={(e) => handleStatusChange(e.target.value)}
@@ -130,6 +147,7 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
         <option value="In Progress">In Progress</option>
         <option value="Completed">Completed</option>
       </StyledSelect>
+
       <Section>
         <h3>Materials</h3>
         <MaterialsList materials={project?.materials} />
@@ -194,6 +212,18 @@ const StyledSelect = styled.select`
   border-radius: 8px;
   background-color: ${({ value }) => statusColors[value] || "#fff"};
   border: 1px solid ${({ value }) => statusColors[value] || "#fff"};
+`;
+
+const HeartButton = styled.button`
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+  width: 100%;
+
+  &:hover {
+    transform: scale(1.2);
+  }
 `;
 
 const Section = styled.section`
