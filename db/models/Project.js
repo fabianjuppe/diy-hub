@@ -13,32 +13,49 @@ const projectSchema = new Schema({
     default: ["/placeholder.jpg"],
   },
 
-  category: {
-    type: String,
-    required: true,
-  },
-  complexity: {
-    type: String,
-    required: true,
-    enum: ["Beginner", "Intermediate", "Advanced"],
-  },
-  duration: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-  },
-  materials: {
-    type: [String],
-  },
-  steps: [
-    {
-      id: String,
-      description: String,
+    category: {
+      type: String,
+      required: true,
     },
-  ],
-});
+    complexity: {
+      type: String,
+      required: true,
+      enum: ["Beginner", "Intermediate", "Advanced"],
+    },
+    duration: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    materials: {
+      type: [String],
+    },
+    steps: [
+      {
+        id: String,
+        description: String,
+      },
+    ],
+    notes: [
+      {
+        id: String,
+        content: String,
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    status: {
+      type: String,
+      enum: ["Planning", "In Progress", "Completed"],
+      default: "Planning",
+    },
+  },
+  { timestamps: true }
+);
 
 const Project =
   mongoose.models.Project || mongoose.model("Project", projectSchema);

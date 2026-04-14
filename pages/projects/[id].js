@@ -49,26 +49,24 @@ export default function ProjectsDetailsPage() {
     }, 3000);
   }
   return (
-   <>
-
+    <>
       {toastMessage.text && (
-        <Toast type={toastMessage.type}>
-          {toastMessage.text}
-        </Toast>
+        <Toast type={toastMessage.type}>{toastMessage.text}</Toast>
       )}
 
       {!showEditForm && (
         <>
-          <ProjectDetails project={data} onEdit={() => setShowEditForm(true)} />
+          <ProjectDetails
+            project={data}
+            onEdit={() => setShowEditForm(true)}
+            mutate={mutate}
+          />
         </>
       )}
 
       {showEditForm && (
         <>
-          <ProjectForm
-            onSubmit={handleEditProject}
-            defaultData={data}
-          />
+          <ProjectForm onSubmit={handleEditProject} defaultData={data} />
 
           <CancelButton onClick={() => setShowEditForm(false)}>
             Cancel

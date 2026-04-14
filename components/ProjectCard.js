@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import styled from "styled-components";
+import { statusColors } from "@/utils/statusColors";
 
 export default function ProjectCard({ project }) {
   // Sicherheitsabfrage, nur wen project.imageUrl gültiger String ist nutzen
@@ -36,6 +37,8 @@ export default function ProjectCard({ project }) {
         <StyledLink href={`/projects/${project._id}`}>
           <H2>{project.title}</H2>
         </StyledLink>
+
+        <StyledStatus $status={project.status}>{project.status}</StyledStatus>
 
         <P>
           <strong>Complexity:</strong> {project.complexity}
@@ -77,6 +80,16 @@ const Content = styled.div`
 const H2 = styled.h2`
   font-size: 1rem;
   margin-bottom: 8px;
+`;
+
+const StyledStatus = styled.p`
+  color: ${({ $status }) => statusColors[$status]};
+  text-align: center;
+  width: 30%;
+  padding: 2px;
+  background-color: ${({ $status }) => statusColors[$status] + "20"};
+  border: 1px solid ${({ $status }) => statusColors[$status]};
+  border-radius: 8px;
 `;
 
 const P = styled.p`

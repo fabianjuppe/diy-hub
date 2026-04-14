@@ -2,9 +2,46 @@ import ProjectForm from "@/components/ProjectForm";
 import ProjectList from "@/components/ProjectList";
 import useSWR from "swr";
 import styled from "styled-components";
+import { useState, useEffect } from "react";
+import Filter from "@/components/Filter";
+import SearchBar from "@/components/SearchBar";
 
 export default function HomePage() {
+  const [search, setSearch] = useState(() => {
+    if (typeof window === "undefined") return "";
+
+    const saved = localStorage.getItem("search");
+    return saved ? saved : "";
+  });
+
+  const [filters, setFilters] = useState(() => {
+    if (typeof window === "undefined") {
+      return {
+        category: "",
+        complexity: "",
+        duration: "",
+      };
+    }
+
+    const saved = localStorage.getItem("filters");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          category: "",
+          complexity: "",
+          duration: "",
+        };
+  });
+
   const { data, isLoading, error, mutate } = useSWR("/api/projects");
+
+  useEffect(() => {
+    localStorage.setItem("filters", JSON.stringify(filters));
+  }, [filters]);
+
+  useEffect(() => {
+    localStorage.setItem("search", search);
+  }, [search]);
 
   if (error) {
     return <h1>ERROR</h1>;
@@ -17,6 +54,29 @@ export default function HomePage() {
   if (!data) {
     return;
   }
+
+  const filteredProjects = data.filter((project) => {
+    const matchesSearch =
+      !search ||
+      project.title.toLowerCase().includes(search.toLowerCase()) ||
+      project.description?.toLowerCase().includes(search.toLowerCase()) ||
+      project.materials?.some((material) =>
+        material.toLowerCase().includes(search.toLowerCase())
+      );
+
+    const matchesCategory =
+      !filters.category || project.category === filters.category;
+
+    const matchesComplexity =
+      !filters.complexity || project.complexity === filters.complexity;
+
+    const matchesDuration =
+      !filters.duration || project.duration === filters.duration;
+
+    return (
+      matchesSearch && matchesCategory && matchesComplexity && matchesDuration
+    );
+  });
 
   async function handleAddProject(projectData) {
     const response = await fetch("/api/projects", {
@@ -45,7 +105,13 @@ export default function HomePage() {
 
       <section>
         <ProjectForm onSubmit={handleAddProject} />
-        <ProjectList />
+        <SearchBar search={search} setSearch={setSearch} />
+        <Filter
+          filters={filters}
+          setFilters={setFilters}
+          setSearch={setSearch}
+        />
+        <ProjectList projects={filteredProjects} />
       </section>
     </Main>
   );
