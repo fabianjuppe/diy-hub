@@ -4,19 +4,24 @@ import Project from "@/db/models/Project";
 export default async function handler(request, response) {
   await dbConnect();
 
+  // GET ALL PROJECTS
   if (request.method === "GET") {
     const projects = await Project.find().sort({ createdAt: -1 });
-    response.status(200).json(projects);
-    return;
+    return response.status(200).json(projects);
   }
+
+  //CREATE PROJECT
 
   if (request.method === "POST") {
-    const projectData = request.body;
-    await Project.create(projectData);
-
-    response.status(201).json({ status: "Project successfully created." });
-    return;
+    try {
+      const projectData = request.body;
+      const createdProject = await Project.create(projectData);
+      return response.status(201).json(createdProject);
+    } catch (error) {
+      console.error(error);
+      return response.status(500).json({ error: "Create failed" });
+    }
   }
 
-  response.status(405).json({ status: "Method not allowed." });
+  return response.status(405).json({ error: "Method not allowed" });
 }

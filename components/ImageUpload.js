@@ -1,25 +1,22 @@
 import { useState } from "react";
 
-export default function ImageUpload({ onUpload, existingImages = [] }) {
-  const [previews, setPreviews] = useState(existingImages);
+export default function ImageUpload({ onFilesChange, existingImages = [] }) {
+  const [previews, setPreviews] = useState(
+    existingImages.map((url) => ({ src: url, isExisting: true }))
+  );
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(null);
 
   const MAX_FILES = 5;
   const MAX_SIZE_MB = 2;
   const ALLOWED_TYPES = ["image/jpeg", "image/png"];
 
-  //UPLOAD / ERROR
-  async function handleFileChange(event) {
+  function handleFileChange(event) {
     const files = Array.from(event.target.files);
-
     setError(null);
 
-    const totalImages = previews.length + files.length;
-
-    if (totalImages > MAX_FILES) {
-      setError("Du kannst maximal 5 Bilder insgesamt haben.");
+    const currentCount = previews.length;
+    if (currentCount + files.length > MAX_FILES) {
+      setError(`Maximal ${MAX_FILES} Bilder erlaubt.`);
       return;
     }
 
@@ -28,63 +25,27 @@ export default function ImageUpload({ onUpload, existingImages = [] }) {
         setError("Nur JPG und PNG sind erlaubt.");
         return;
       }
-
       if (file.size > MAX_SIZE_MB * 1024 * 1024) {
         setError("Jedes Bild darf maximal 2MB groß sein.");
         return;
       }
     }
 
-    setLoading(true);
+    const newPreviews = files.map((file) => ({
+      src: URL.createObjectURL(file),
+      file,
+      isExisting: false,
+    }));
 
-    try {
-      const uploadedUrls = [];
-      const localPreviews = [];
-
-      for (const file of files) {
-        // Preview lokal
-        localPreviews.push(URL.createObjectURL(file));
-
-        const formData = new FormData();
-        formData.append("file", file);
-
-        formData.append("upload_preset", "unsigned_upload");
-
-        const res = await fetch(
-          "https://api.cloudinary.com/v1_1/dqlls4v16/image/upload",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.error?.message || "Upload failed");
-        }
-
-        uploadedUrls.push(data.secure_url);
-      }
-
-      const updatedPreviews = [...previews, ...localPreviews];
-      setPreviews(updatedPreviews);
-
-      // SEND TO PARENT FORM
-      onUpload((prev) => [...prev, ...uploadedUrls]);
-    } catch (err) {
-      setError(err.message);
-    }
-
-    setLoading(false);
+    const updated = [...previews, ...newPreviews];
+    setPreviews(updated);
+    onFilesChange(updated);
   }
 
-  //DELETE
-  function handleDelete(indexToDelete) {
-    const updated = previews.filter((_, i) => i !== indexToDelete);
-
+  function handleDelete(index) {
+    const updated = previews.filter((_, i) => i !== index);
     setPreviews(updated);
-    onUpload(updated);
+    onFilesChange(updated);
   }
 
   return (
@@ -96,53 +57,46 @@ export default function ImageUpload({ onUpload, existingImages = [] }) {
         onChange={handleFileChange}
       />
 
-      {loading && <p>Uploading...</p>}
-
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* PREVIEWS */}
-      <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-        {previews.map((src, index) => (
-          <div
-            key={index}
-            style={{ position: "relative", cursor: "pointer" }}
-            onClick={() => setActiveIndex(index === activeIndex ? null : index)}
-          >
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          marginTop: "10px",
+          flexWrap: "wrap",
+        }}
+      >
+        {previews.map((item, index) => (
+          <div key={index} style={{ position: "relative" }}>
             <img
-              src={src}
-              alt={`preview-${index}`}
+              src={item.src}
               style={{
-                width: "100px",
-                height: "100px",
+                width: 100,
+                height: 100,
                 objectFit: "cover",
-                borderRadius: "8px",
-                transition: "opacity 0.2s",
-                opacity: activeIndex === index ? 0.6 : 1,
+                borderRadius: 6,
               }}
             />
-            {/* DELETE BUTTON */}
-            {activeIndex === index && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(index);
-                }}
-                style={{
-                  position: "absolute",
-                  bottom: "-30px",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  background: "red",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "4px 8px",
-                  cursor: "pointer",
-                }}
-              >
-                Delete?
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => handleDelete(index)}
+              style={{
+                position: "absolute",
+                top: 4,
+                right: 4,
+                background: "rgba(0,0,0,0.6)",
+                color: "white",
+                border: "none",
+                borderRadius: "50%",
+                width: 22,
+                height: 22,
+                cursor: "pointer",
+                fontSize: 12,
+              }}
+            >
+              ✕
+            </button>
           </div>
         ))}
       </div>
