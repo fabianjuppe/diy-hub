@@ -7,8 +7,15 @@ import { useRouter } from "next/router";
 import styled from "styled-components";
 import NotesSection from "./NotesSection";
 import { statusColors } from "@/utils/statusColors";
+import BookmarkButton from "./BookmarkButton";
 
-export default function ProjectDetails({ project, onEdit, mutate }) {
+export default function ProjectDetails({
+  project,
+  onEdit,
+  mutate,
+  bookmarks,
+  toggleBookmark,
+}) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState(null);
@@ -122,6 +129,17 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
         complexity={project?.complexity}
         description={project?.description}
       />
+
+      <BookmarkButton
+        onClick={() => toggleBookmark(project?._id)}
+        ariaLabel={
+          bookmarks.includes(project?._id)
+            ? "Remove from bookmarks"
+            : "Add to bookmarks"
+        }
+        isBookmarked={bookmarks.includes(project?._id)}
+      />
+
       <StyledSelect
         value={project?.status}
         onChange={(e) => handleStatusChange(e.target.value)}
@@ -130,6 +148,7 @@ export default function ProjectDetails({ project, onEdit, mutate }) {
         <option value="In Progress">In Progress</option>
         <option value="Completed">Completed</option>
       </StyledSelect>
+
       <Section>
         <h3>Materials</h3>
         <MaterialsList materials={project?.materials} />
