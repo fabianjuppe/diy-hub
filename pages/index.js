@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import Filter from "@/components/Filter";
 import SearchBar from "@/components/SearchBar";
 
-export default function HomePage() {
+export default function HomePage({ bookmarks, toggleBookmark }) {
   const [search, setSearch] = useState(() => {
     if (typeof window === "undefined") return "";
 
@@ -35,13 +35,6 @@ export default function HomePage() {
         };
   });
 
-  const [bookmarks, setBookmarks] = useState(() => {
-    if (typeof window === "undefined") return {};
-
-    const saved = localStorage.getItem("bookmarks");
-    return saved ? JSON.parse(saved) : {};
-  });
-
   const { data, isLoading, error, mutate } = useSWR("/api/projects");
 
   useEffect(() => {
@@ -51,10 +44,6 @@ export default function HomePage() {
   useEffect(() => {
     localStorage.setItem("search", search);
   }, [search]);
-
-  useEffect(() => {
-    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
-  }, [bookmarks]);
 
   if (error) {
     return <h1>ERROR</h1>;
@@ -86,7 +75,8 @@ export default function HomePage() {
     const matchesDuration =
       !filters.duration || project.duration === filters.duration;
 
-    const matchesBookmarked = !filters.bookmarked || bookmarks[project._id];
+    const matchesBookmarked =
+      !filters.bookmarked || bookmarks.includes(project._id);
 
     return (
       matchesSearch &&
@@ -96,13 +86,6 @@ export default function HomePage() {
       matchesBookmarked
     );
   });
-
-  function toggleBookmark(id) {
-    setBookmarks((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  }
 
   async function handleAddProject(projectData) {
     const response = await fetch("/api/projects", {

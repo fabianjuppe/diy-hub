@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import styled from "styled-components";
 import NotesSection from "./NotesSection";
 import { statusColors } from "@/utils/statusColors";
+import BookmarkButton from "./BookmarkButton";
 
 export default function ProjectDetails({
   project,
@@ -129,15 +130,15 @@ export default function ProjectDetails({
         description={project?.description}
       />
 
-      <HeartButton
+      <BookmarkButton
         onClick={() => toggleBookmark(project?._id)}
-        aria-label={
-          bookmarks[project?._id] ? "Remove from bookmarks" : "Add to bookmarks"
+        ariaLabel={
+          bookmarks.includes(project?._id)
+            ? "Remove from bookmarks"
+            : "Add to bookmarks"
         }
-        aria-pressed={bookmarks[project?._id]}
-      >
-        {bookmarks[project?._id] ? "❤️" : "🤍"}
-      </HeartButton>
+        isBookmarked={bookmarks.includes(project?._id)}
+      />
 
       <StyledSelect
         value={project?.status}
@@ -212,18 +213,6 @@ const StyledSelect = styled.select`
   border-radius: 8px;
   background-color: ${({ value }) => statusColors[value] || "#fff"};
   border: 1px solid ${({ value }) => statusColors[value] || "#fff"};
-`;
-
-const HeartButton = styled.button`
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 20px;
-  width: 100%;
-
-  &:hover {
-    transform: scale(1.2);
-  }
 `;
 
 const Section = styled.section`

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import styled from "styled-components";
 import { statusColors } from "@/utils/statusColors";
+import BookmarkButton from "./BookmarkButton";
 
 export default function ProjectCard({ project, bookmarks, toggleBookmark }) {
   return (
@@ -22,17 +23,15 @@ export default function ProjectCard({ project, bookmarks, toggleBookmark }) {
 
         <StyledStatus $status={project.status}>{project.status}</StyledStatus>
 
-        <HeartButton
+        <BookmarkButton
           onClick={() => toggleBookmark(project._id)}
-          aria-label={
-            bookmarks[project._id]
+          ariaLabel={
+            bookmarks.includes(project._id)
               ? "Remove from bookmarks"
               : "Add to bookmarks"
           }
-          aria-pressed={bookmarks[project._id]}
-        >
-          {bookmarks[project._id] ? "❤️" : "🤍"}
-        </HeartButton>
+          isBookmarked={bookmarks.includes(project._id)}
+        />
 
         <P>
           <strong>Complexity:</strong> {project.complexity}
@@ -83,17 +82,6 @@ const StyledStatus = styled.p`
   background-color: ${({ $status }) => statusColors[$status] + "20"};
   border: 1px solid ${({ $status }) => statusColors[$status]};
   border-radius: 8px;
-`;
-
-const HeartButton = styled.button`
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 20px;
-
-  &:hover {
-    transform: scale(1.2);
-  }
 `;
 
 const P = styled.p`

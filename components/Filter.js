@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import BookmarkButton from "./BookmarkButton";
 
 const categoryOptions = [
   "Woodworking",
@@ -85,23 +86,20 @@ export default function Filter({ filters, setFilters, setSearch }) {
         ))}
       </StyledSelect>
 
-      <HeartButton
-        type="button"
+      <BookmarkButton
         onClick={() =>
           setFilters((prev) => ({
             ...prev,
             bookmarked: !prev.bookmarked,
           }))
         }
-        aria-label={
+        ariaLabel={
           filters.bookmarked
             ? "Show all projects"
             : "Show only bookmarked projects"
         }
-        aria-pressed={filters.bookmarked}
-      >
-        {filters.bookmarked ? "❤️" : "🤍"}
-      </HeartButton>
+        isBookmarked={filters.bookmarked}
+      />
 
       <ResetButton type="button" onClick={handleReset}>
         Reset Filters
@@ -122,17 +120,6 @@ const StyledSelect = styled.select`
   border-radius: 8px;
   border: 1px solid #ddd;
   background: white;
-`;
-
-const HeartButton = styled.button`
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 20px;
-
-  &:hover {
-    transform: scale(1.2);
-  }
 `;
 
 const ResetButton = styled.button`
