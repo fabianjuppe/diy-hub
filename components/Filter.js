@@ -95,7 +95,7 @@ export default function Filter({ filters, setFilters, setSearch }) {
         }
         ariaLabel={
           filters.bookmarked
-            ? "Show all projects"
+            ? "Disable bookmark filter"
             : "Show only bookmarked projects"
         }
         isBookmarked={filters.bookmarked}
