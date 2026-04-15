@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import BookmarkButton from "./BookmarkButton";
 
 const categoryOptions = [
   "Woodworking",
@@ -36,6 +37,7 @@ export default function Filter({ filters, setFilters, setSearch }) {
       category: "",
       complexity: "",
       duration: "",
+      bookmarked: false,
     };
     setSearch("");
     setFilters(reset);
@@ -83,6 +85,21 @@ export default function Filter({ filters, setFilters, setSearch }) {
           </option>
         ))}
       </StyledSelect>
+
+      <BookmarkButton
+        onClick={() =>
+          setFilters((prev) => ({
+            ...prev,
+            bookmarked: !prev.bookmarked,
+          }))
+        }
+        ariaLabel={
+          filters.bookmarked
+            ? "Disable bookmark filter"
+            : "Show only bookmarked projects"
+        }
+        isBookmarked={filters.bookmarked}
+      />
 
       <ResetButton type="button" onClick={handleReset}>
         Reset Filters

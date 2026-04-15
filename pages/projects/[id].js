@@ -5,7 +5,7 @@ import { useState } from "react";
 import ProjectForm from "@/components/ProjectForm";
 import styled from "styled-components";
 
-export default function ProjectsDetailsPage() {
+export default function ProjectsDetailsPage({ bookmarks, toggleBookmark }) {
   const [showEditForm, setShowEditForm] = useState(false);
   const [toastMessage, setToastMessage] = useState({ type: "", text: "" });
   const router = useRouter();
@@ -60,6 +60,8 @@ export default function ProjectsDetailsPage() {
             project={data}
             onEdit={() => setShowEditForm(true)}
             mutate={mutate}
+            bookmarks={bookmarks}
+            toggleBookmark={toggleBookmark}
           />
         </>
       )}

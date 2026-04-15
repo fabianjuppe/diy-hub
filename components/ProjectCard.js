@@ -2,8 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import styled from "styled-components";
 import { statusColors } from "@/utils/statusColors";
+import BookmarkButton from "./BookmarkButton";
 
-export default function ProjectCard({ project }) {
+export default function ProjectCard({ project,bookmarks, toggleBookmark }) {
   const imageSrc = project.imageUrl?.[0] || "/placeholder.jpg";
   return (
     <Article>
@@ -22,6 +23,16 @@ export default function ProjectCard({ project }) {
         </StyledLink>
 
         <StyledStatus $status={project.status}>{project.status}</StyledStatus>
+
+        <BookmarkButton
+          onClick={() => toggleBookmark(project._id)}
+          ariaLabel={
+            bookmarks.includes(project._id)
+              ? "Remove from bookmarks"
+              : "Add to bookmarks"
+          }
+          isBookmarked={bookmarks.includes(project._id)}
+        />
 
         <P>
           <strong>Complexity:</strong> {project.complexity}

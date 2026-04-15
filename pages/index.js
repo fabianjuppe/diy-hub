@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import Filter from "@/components/Filter";
 import SearchBar from "@/components/SearchBar";
 
-export default function HomePage() {
+export default function HomePage({ bookmarks, toggleBookmark }) {
   const [search, setSearch] = useState(() => {
     if (typeof window === "undefined") return "";
 
@@ -20,6 +20,7 @@ export default function HomePage() {
         category: "",
         complexity: "",
         duration: "",
+        bookmarked: false,
       };
     }
 
@@ -30,6 +31,7 @@ export default function HomePage() {
           category: "",
           complexity: "",
           duration: "",
+          bookmarked: false,
         };
   });
 
@@ -73,8 +75,15 @@ export default function HomePage() {
     const matchesDuration =
       !filters.duration || project.duration === filters.duration;
 
+    const matchesBookmarked =
+      !filters.bookmarked || bookmarks.includes(project._id);
+
     return (
-      matchesSearch && matchesCategory && matchesComplexity && matchesDuration
+      matchesSearch &&
+      matchesCategory &&
+      matchesComplexity &&
+      matchesDuration &&
+      matchesBookmarked
     );
   });
 
@@ -111,7 +120,11 @@ export default function HomePage() {
           setFilters={setFilters}
           setSearch={setSearch}
         />
-        <ProjectList projects={filteredProjects} />
+        <ProjectList
+          projects={filteredProjects}
+          bookmarks={bookmarks}
+          toggleBookmark={toggleBookmark}
+        />
       </section>
     </Main>
   );
