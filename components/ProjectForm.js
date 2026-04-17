@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import ImageUpload from "./ImageUpload";
 
 const categoryOptions = [
   "Woodworking",
@@ -13,29 +14,67 @@ const categoryOptions = [
 const complexityOptions = ["Beginner", "Intermediate", "Advanced"];
 
 export default function ProjectForm({ onSubmit, defaultData }) {
-  function handleSubmit(event) {
+  const [imageFiles, setImageFiles] = useState(
+    Array.isArray(defaultData?.imageUrl)
+      ? defaultData.imageUrl.map((url) => ({ src: url, isExisting: true }))
+      : []
+  );
+
+  async function handleSubmit(event) {
     event.preventDefault();
-
     const formData = new FormData(event.target);
-    const projectData = Object.fromEntries(formData);
 
-    projectData.materials = projectData.materials
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean);
+    // BESTEHENDE URL ÜBERNEHMEN
+    const existingUrls = imageFiles
+      .filter((imageFile) => imageFile.isExisting)
+      .map((imageFile) => imageFile.src);
 
-    projectData.steps = projectData.steps
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean)
-      .map((desc) => ({
-        id: crypto.randomUUID(),
-        description: desc,
-      }));
+    // NEUE BEI CLOUDINARY HOCHLADEN
+    const newUrls = [];
+    for (const item of imageFiles.filter(
+      (imageFile) => !imageFile.isExisting
+    )) {
+      const data = new FormData();
+      data.append("image", item.file);
+
+      const res = await fetch("/api/upload", { method: "POST", body: data });
+      const result = await res.json();
+
+      if (!res.ok) {
+        alert("Upload fehlgeschlagen: " + result.error);
+        return;
+      }
+      newUrls.push(result.url);
+    }
+
+    const allImageUrls = [...existingUrls, ...newUrls];
+
+    const projectData = {
+      title: formData.get("title"),
+      description: formData.get("description"),
+      category: formData.get("category"),
+      complexity: formData.get("complexity"),
+      duration: formData.get("duration"),
+      imageUrl: allImageUrls,
+      materials: formData
+        .get("materials")
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean),
+      steps: formData
+        .get("steps")
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean)
+        .map((desc) => ({ id: crypto.randomUUID(), description: desc })),
+    };
 
     onSubmit(projectData);
+
+    //RESET FOKUS
     event.target.reset();
-    event.target.elements.title.focus();
+    setImageFiles([]);
+    event.target.elements.title?.focus();
   }
 
   return (
@@ -54,6 +93,13 @@ export default function ProjectForm({ onSubmit, defaultData }) {
         defaultValue={defaultData?.title}
       />
 
+      <ImageUpload
+        onFilesChange={setImageFiles}
+        existingImages={imageFiles
+          .filter((imageFile) => imageFile.isExisting)
+          .map((imageFile) => imageFile.src)}
+      />
+
       <StyledLabel htmlFor="description">Description: </StyledLabel>
       <StyledInput
         type="text"
@@ -69,9 +115,7 @@ export default function ProjectForm({ onSubmit, defaultData }) {
         defaultValue={defaultData?.category}
         required
       >
-        <option value="" selected>
-          Please select a category
-        </option>
+        <option value="">Please select a category</option>
         {categoryOptions.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -86,9 +130,7 @@ export default function ProjectForm({ onSubmit, defaultData }) {
         defaultValue={defaultData?.complexity}
         required
       >
-        <option value="" selected>
-          Please select a complexity
-        </option>
+        <option value="">Please select a complexity</option>
         {complexityOptions.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -110,7 +152,11 @@ export default function ProjectForm({ onSubmit, defaultData }) {
         type="text"
         id="materials"
         name="materials"
-        defaultValue={defaultData?.materials}
+        defaultValue={
+          Array.isArray(defaultData?.materials)
+            ? defaultData.materials.join(", ")
+            : defaultData?.materials
+        }
       />
 
       <StyledLabel htmlFor="steps">Steps: </StyledLabel>
@@ -118,15 +164,18 @@ export default function ProjectForm({ onSubmit, defaultData }) {
         type="text"
         id="steps"
         name="steps"
-        defaultValue={defaultData?.steps
-          ?.map((step) => step.description)
-          .join(", ")}
+        defaultValue={
+          Array.isArray(defaultData?.steps)
+            ? defaultData.steps.map((step) => step.description).join(", ")
+            : ""
+        }
       />
 
       <StyledButton type="submit">Submit</StyledButton>
     </StyledForm>
   );
 }
+
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -137,7 +186,6 @@ const StyledForm = styled.form`
   border-radius: 12px;
   background: #ffffff;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-
 `;
 
 const Title = styled.h2`
@@ -155,6 +203,7 @@ const StyledInput = styled.input`
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 0.9rem;
+
   &:focus {
     outline: none;
     border-color: #333;
@@ -166,6 +215,7 @@ const StyledSelect = styled.select`
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 0.9rem;
+
   &:focus {
     outline: none;
     border-color: #333;
@@ -182,6 +232,7 @@ const StyledButton = styled.button`
   font-weight: bold;
   cursor: pointer;
   transition: 0.2s;
+
   &:hover {
     background: #333;
   }

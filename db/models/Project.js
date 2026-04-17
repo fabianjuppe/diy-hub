@@ -2,18 +2,16 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
-const projectSchema = new Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      minlength: 3,
-    },
-    imageUrl: {
-      type: String,
-      required: true,
-      default: "/placeholder.jpg",
-    },
+const projectSchema = new Schema({
+  title: {
+    type: String,
+    required: true,
+    minlength: 3,
+  },
+  imageUrl: {
+    type: [String],
+    default: ["/placeholder.jpg"],
+  },
 
     category: {
       type: String,
