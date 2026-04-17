@@ -38,10 +38,12 @@ export default function NotesList({ notes, onEdit, onDelete }) {
                   onChange={(e) => setEditValue(e.target.value)}
                   required
                 />
-                <StyledButton type="submit">Save</StyledButton>
-                <StyledButton onClick={() => setEditingId(null)}>
-                  Cancel
-                </StyledButton>
+                <ButtonRow>
+                  <SaveButton type="submit">Save</SaveButton>
+                  <CancelButton onClick={() => setEditingId(null)}>
+                    Cancel
+                  </CancelButton>
+                </ButtonRow>
               </StyledForm>
             ) : (
               <>
@@ -49,18 +51,19 @@ export default function NotesList({ notes, onEdit, onDelete }) {
                   {formattedDate}, {formattedTime}
                 </StyledDate>
                 <p>{note.content}</p>
-
-                <StyledButton
-                  onClick={() => {
-                    setEditingId(note.id);
-                    setEditValue(note.content);
-                  }}
-                >
-                  Edit
-                </StyledButton>
-                <StyledButton onClick={() => onDelete(note.id)}>
-                  Delete
-                </StyledButton>
+                <ButtonRow>
+                  <EditButton
+                    onClick={() => {
+                      setEditingId(note.id);
+                      setEditValue(note.content);
+                    }}
+                  >
+                    Edit
+                  </EditButton>
+                  <DeleteButton onClick={() => onDelete(note.id)}>
+                    Delete
+                  </DeleteButton>
+                </ButtonRow>
               </>
             )}
           </StyledItem>
@@ -74,62 +77,84 @@ const StyledList = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
+  display: grid;
+  gap: 16px;
 `;
 
 const StyledDate = styled.p`
-  font-size: 0.75rem;
+  margin: 0;
+  font-size: 0.8rem;
   color: #888;
-  text-align: right;
 `;
 
 const StyledItem = styled.li`
-  list-style: none;
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 `;
 
 const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 30px;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 12px;
 `;
 
 const StyledLabel = styled.label`
   font-weight: 600;
-  font-size: 0.9rem;
 `;
 
 const StyledInput = styled.input`
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
   border: 1px solid #ddd;
-  font-size: 0.9rem;
   &:focus {
     outline: none;
-    border-color: #333;
+    border-color: #999;
   }
 `;
 
-const StyledButton = styled.button`
-  margin-top: 15px;
-  padding: 12px;
+const BaseButton = styled.button`
+  padding: 10px 14px;
   border: none;
-  border-radius: 8px;
-  background: black;
-  color: white;
-  font-weight: bold;
+  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
+`;
+
+const SaveButton = styled(BaseButton)`
+  background: #111;
+  color: white;
   &:hover {
-    background: #333;
+    background: #2d2d2d;
   }
+`;
+
+const CancelButton = styled(BaseButton)`
+  background: #f1f3f5;
+  &:hover {
+    background: #e9ecef;
+  }
+`;
+
+const EditButton = styled(BaseButton)`
+  background: #0070f3;
+  color: white;
+  &:hover {
+    background: #0059c1;
+  }
+`;
+
+const DeleteButton = styled(BaseButton)`
+  background: #ff4d4f;
+  color: white;
+  &:hover {
+    background: #e03131;
+  }
+`;
+const ButtonRow = styled.div`
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 `;

@@ -77,7 +77,6 @@ export default function ProjectInfo({
         </Overlay>
       )}
       <Content>
-        <Title>{title}</Title>
         <Infos>
           <Tag>Category: {category}</Tag>
           <Tag>Duration: {duration}</Tag>

@@ -19,7 +19,7 @@ export default function NotesSection({ notes, onAdd, onEdit, onDelete }) {
   }
 
   return (
-    <>
+    <Wrapper>
       <StyledForm onSubmit={handleSubmit} aria-labelledby="form-heading">
         <Title id="form-heading">Notes</Title>
 
@@ -30,54 +30,50 @@ export default function NotesSection({ notes, onAdd, onEdit, onDelete }) {
       </StyledForm>
 
       <NotesList notes={notes} onEdit={onEdit} onDelete={onDelete} />
-    </>
+    </Wrapper>
   );
 }
+const Wrapper = styled.section`
+  margin-top: 32px;
+`;
 
 const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 30px;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 14px;
+  margin: 0 0 24px;
+  padding: 24px;
+  border-radius: 18px;
+  background: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 `;
 
 const Title = styled.h2`
-  text-align: center;
-  margin-bottom: 10px;
+  margin: 0;
 `;
 
 const StyledLabel = styled.label`
   font-weight: 600;
-  font-size: 0.9rem;
 `;
 
 const StyledInput = styled.input`
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
   border: 1px solid #ddd;
-  font-size: 0.9rem;
   &:focus {
     outline: none;
-    border-color: #333;
+    border-color: #999;
   }
 `;
 
 const StyledButton = styled.button`
-  margin-top: 15px;
-  padding: 12px;
+  padding: 12px 14px;
   border: none;
-  border-radius: 8px;
-  background: black;
+  border-radius: 12px;
+  background: #111;
   color: white;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  transition: 0.2s;
   &:hover {
-    background: #333;
+    background: #2d2d2d;
   }
 `;
