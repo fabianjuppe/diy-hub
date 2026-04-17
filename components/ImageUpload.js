@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { useState } from "react";
+import styled from "styled-components";
 
 export default function ImageUpload({ onFilesChange, existingImages = [] }) {
   const [previews, setPreviews] = useState(
@@ -57,49 +59,57 @@ export default function ImageUpload({ onFilesChange, existingImages = [] }) {
         onChange={handleFileChange}
       />
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <StyledP>{error}</StyledP>}
 
-      <div
-        style={{
-          display: "flex",
-          gap: "10px",
-          marginTop: "10px",
-          flexWrap: "wrap",
-        }}
-      >
+      <Wrapper>
         {previews.map((item, index) => (
-          <div key={index} style={{ position: "relative" }}>
-            <img
+          <StyledDiv key={index}>
+            <StyledImage
               src={item.src}
-              style={{
-                width: 100,
-                height: 100,
-                objectFit: "cover",
-                borderRadius: 6,
-              }}
+              width={100}
+              height={100}
+              alt="Uploaded Image"
             />
-            <button
-              type="button"
-              onClick={() => handleDelete(index)}
-              style={{
-                position: "absolute",
-                top: 4,
-                right: 4,
-                background: "rgba(0,0,0,0.6)",
-                color: "white",
-                border: "none",
-                borderRadius: "50%",
-                width: 22,
-                height: 22,
-                cursor: "pointer",
-                fontSize: 12,
-              }}
-            >
+            <StyledButton type="button" onClick={() => handleDelete(index)}>
               ✕
-            </button>
-          </div>
+            </StyledButton>
+          </StyledDiv>
         ))}
-      </div>
+      </Wrapper>
     </div>
   );
 }
+
+const StyledP = styled.p`
+  color: red;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+`;
+
+const StyledDiv = styled.div`
+  position: relative;
+`;
+
+const StyledImage = styled(Image)`
+  object-fit: cover;
+  border-radius: 6px;
+`;
+
+const StyledButton = styled.button`
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  font-size: 12px;
+`;

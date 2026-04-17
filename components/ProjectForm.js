@@ -19,7 +19,6 @@ export default function ProjectForm({ onSubmit, defaultData }) {
       ? defaultData.imageUrl.map((url) => ({ src: url, isExisting: true }))
       : []
   );
-  const [uploadKey, setUploadKey] = useState(0);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -27,12 +26,14 @@ export default function ProjectForm({ onSubmit, defaultData }) {
 
     // BESTEHENDE URL ÜBERNEHMEN
     const existingUrls = imageFiles
-      .filter((f) => f.isExisting)
-      .map((f) => f.src);
+      .filter((imageFile) => imageFile.isExisting)
+      .map((imageFile) => imageFile.src);
 
     // NEUE BEI CLOUDINARY HOCHLADEN
     const newUrls = [];
-    for (const item of imageFiles.filter((f) => !f.isExisting)) {
+    for (const item of imageFiles.filter(
+      (imageFile) => !imageFile.isExisting
+    )) {
       const data = new FormData();
       data.append("image", item.file);
 
@@ -73,7 +74,6 @@ export default function ProjectForm({ onSubmit, defaultData }) {
     //RESET FOKUS
     event.target.reset();
     setImageFiles([]);
-    setUploadKey((prev) => prev + 1);
     event.target.elements.title?.focus();
   }
 
@@ -94,11 +94,10 @@ export default function ProjectForm({ onSubmit, defaultData }) {
       />
 
       <ImageUpload
-        key={uploadKey}
         onFilesChange={setImageFiles}
         existingImages={imageFiles
-          .filter((f) => f.isExisting)
-          .map((f) => f.src)}
+          .filter((imageFile) => imageFile.isExisting)
+          .map((imageFile) => imageFile.src)}
       />
 
       <StyledLabel htmlFor="description">Description: </StyledLabel>
