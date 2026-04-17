@@ -121,24 +121,30 @@ export default function ProjectDetails({
 
   return (
     <Wrapper>
+      <BackWrapper>
+        <BackButton />
+      </BackWrapper>
+
       <ProjectInfo
-        title={project?.title}
         imageUrl={project?.imageUrl}
         category={project?.category}
         duration={project?.duration}
         complexity={project?.complexity}
         description={project?.description}
       />
+      <TopRow>
+        <Title>{project?.title}</Title>
 
-      <BookmarkButton
-        onClick={() => toggleBookmark(project?._id)}
-        ariaLabel={
-          bookmarks.includes(project?._id)
-            ? "Remove from bookmarks"
-            : "Add to bookmarks"
-        }
-        isBookmarked={bookmarks.includes(project?._id)}
-      />
+        <BookmarkButton
+          onClick={() => toggleBookmark(project?._id)}
+          ariaLabel={
+            bookmarks.includes(project?._id)
+              ? "Remove from bookmarks"
+              : "Add to bookmarks"
+          }
+          isBookmarked={bookmarks.includes(project?._id)}
+        />
+      </TopRow>
 
       <StyledSelect
         value={project?.status}
@@ -163,9 +169,7 @@ export default function ProjectDetails({
         onEdit={handleEditNote}
         onDelete={handleDeleteNote}
       />
-      <BackWrapper>
-        <BackButton />
-      </BackWrapper>
+
       <ActionGroup>
         <EditButton onClick={onEdit}>Edit</EditButton>
         <DeleteButton
@@ -202,49 +206,45 @@ export default function ProjectDetails({
 }
 
 const Wrapper = styled.main`
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
+  max-width: 900px;
+  margin: 32px auto 48px;
+  padding: 0 24px;
 `;
 
 const StyledSelect = styled.select`
-  color: #fff;
-  padding: 6px;
-  border-radius: 8px;
-  background-color: ${({ value }) => statusColors[value] || "#fff"};
-  border: 1px solid ${({ value }) => statusColors[value] || "#fff"};
+  color: white;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background-color: ${({ value }) => statusColors[value] || "#666"};
+  border: none;
 `;
 
 const Section = styled.section`
-  margin-top: 30px;
+  margin-top: 28px;
   h3 {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 1.2rem;
   }
   ul {
     padding-left: 20px;
-    line-height: 1.6;
+    line-height: 1.7;
   }
 `;
 
 const BackWrapper = styled.div`
-  margin-top: 30px;
+  margin-bottom: 20px;
 `;
 
 const DeleteButton = styled.button`
-  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
   background: #ff4d4f;
   color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
-  transition:
-    background 0.15s ease-out,
-    transform 0.15s ease-out;
   &:hover {
     background: #e03131;
-    transform: translateY(-1px);
   }
 `;
 
@@ -260,11 +260,11 @@ const Overlay = styled.div`
 
 const ConfirmBox = styled.div`
   background: white;
-  padding: 25px;
-  border-radius: 12px;
-  width: 320px;
+  padding: 28px;
+  border-radius: 18px;
+  width: min(90vw, 360px);
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
 `;
 
 const ConfirmText = styled.p`
@@ -279,8 +279,8 @@ const ButtonRow = styled.div`
 `;
 
 const CancelButton = styled.button`
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: 1px solid #ccc;
   background: white;
   cursor: pointer;
@@ -290,8 +290,8 @@ const CancelButton = styled.button`
 `;
 
 const ConfirmDeleteButton = styled.button`
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: none;
   background: #ff4d4f;
   color: white;
@@ -303,19 +303,29 @@ const ConfirmDeleteButton = styled.button`
 const ActionGroup = styled.div`
   margin-top: 30px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
+  gap: 12px;
 `;
 
 const EditButton = styled.button`
-  padding: 8px 14px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
   border: none;
   background: #0070f3;
   color: white;
+  font-weight: 600;
   cursor: pointer;
   &:hover {
     background: #0059c1;
   }
+`;
+const TopRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const Title = styled.h2`
+  font-size: 1.6rem;
+  margin: 0;
 `;

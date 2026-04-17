@@ -7,6 +7,8 @@ import Filter from "@/components/Filter";
 import SearchBar from "@/components/SearchBar";
 
 export default function HomePage({ bookmarks, toggleBookmark }) {
+  const [showForm, setShowForm] = useState(false);
+
   const [search, setSearch] = useState(() => {
     if (typeof window === "undefined") return "";
 
@@ -104,16 +106,27 @@ export default function HomePage({ bookmarks, toggleBookmark }) {
 
     mutate();
     alert("Project successfully created.");
+    await mutate();
+    setShowForm(false);
   }
 
   return (
     <Main>
       <Header>
-        <Heading>DIY HUB</Heading>
+        <HeaderTop>
+          <Heading>Hands On</Heading>
+          <AddButton type="button" onClick={() => setShowForm((prev) => !prev)}>
+            {showForm ? "Close Form" : "+ Add Project"}
+          </AddButton>
+        </HeaderTop>
+
+        <Subheading>
+          Organise and manage your DIY projects in one place.
+        </Subheading>
       </Header>
 
       <section>
-        <ProjectForm onSubmit={handleAddProject} />
+        {showForm && <ProjectForm onSubmit={handleAddProject} />}
         <SearchBar search={search} setSearch={setSearch} />
         <Filter
           filters={filters}
@@ -130,18 +143,48 @@ export default function HomePage({ bookmarks, toggleBookmark }) {
   );
 }
 const Main = styled.main`
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
 `;
 
 const Header = styled.header`
-  text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 `;
-
+const HeaderTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+`;
 const Heading = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: 1px;
+  margin: 0;
+  font-size: 3rem;
+  line-height: 1;
+`;
+const AddButton = styled.button`
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  background: #111;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+  &:hover {
+    background: #2d2d2d;
+    transform: translateY(-1px);
+  }
+`;
+const Subheading = styled.p`
+  margin: 0;
+  color: #666;
+  font-size: 1rem;
 `;

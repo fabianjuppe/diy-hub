@@ -21,10 +21,12 @@ export default function ProjectList({ projects, bookmarks, toggleBookmark }) {
 }
 const Grid = styled.section`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
 `;
 
 const Message = styled.p`
   text-align: center;
+  color: #666;
+  padding: 30px 0;
 `;

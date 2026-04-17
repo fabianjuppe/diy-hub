@@ -49,7 +49,7 @@ export default function ProjectsDetailsPage({ bookmarks, toggleBookmark }) {
     }, 3000);
   }
   return (
-    <>
+    <Wrapper>
       {toastMessage.text && (
         <Toast type={toastMessage.type}>{toastMessage.text}</Toast>
       )}
@@ -75,38 +75,19 @@ export default function ProjectsDetailsPage({ bookmarks, toggleBookmark }) {
           </CancelButton>
         </>
       )}
-    </>
+    </Wrapper>
   );
 }
 
-const ActionRow = styled.div`
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-`;
-
-const EditButton = styled.button`
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
-  background: #0070f3;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  &:hover {
-    background: #0059c1;
-    transform: translateY(-1px);
-  }
+const Wrapper = styled.main`
+  padding-bottom: 40px;
 `;
 
 const CancelButton = styled.button`
-  margin: 20px auto;
+  margin: 20px auto 0;
   display: block;
-  padding: 10px 14px;
-  border-radius: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
   border: 1px solid #ccc;
   background: white;
   cursor: pointer;
@@ -119,8 +100,11 @@ const Toast = styled.div`
   position: fixed;
   top: 20px;
   right: 20px;
+  z-index: 1000;
   padding: 12px 18px;
-  border-radius: 8px;
+  border-radius: 12px;
   color: white;
-  font-weight: 500;
+  font-weight: 600;
+  background: ${({ $type }) => ($type === "error" ? "#ff4d4f" : "#16a34a")};
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
 `;

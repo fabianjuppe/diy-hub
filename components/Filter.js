@@ -110,26 +110,34 @@ export default function Filter({ filters, setFilters, setSearch }) {
 
 const Wrapper = styled.div`
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
   flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 10px;
 `;
 
 const StyledSelect = styled.select`
-  padding: 10px;
-  border-radius: 8px;
+  min-width: 170px;
+  padding: 12px 14px;
+  border-radius: 12px;
   border: 1px solid #ddd;
   background: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+  &:focus {
+    outline: none;
+    border-color: #999;
+  }
 `;
 
 const ResetButton = styled.button`
-  padding: 10px 14px;
+  padding: 12px 16px;
   border: none;
-  border-radius: 8px;
-  background: black;
+  border-radius: 12px;
+  background: #111;
   color: white;
+  font-weight: 600;
   cursor: pointer;
   &:hover {
-    background: #333;
+    background: #2d2d2d;
   }
 `;
